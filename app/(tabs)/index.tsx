@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
 import { theme } from '@/lib/theme';
 import { useGameStore } from '@/stores/useGameStore';
 import { mascots } from '@/data/mascots';
@@ -9,6 +10,8 @@ import MascotCard from '@/components/MascotCard';
 import { PortalCard } from '@/components/home/PortalCard';
 import { DailyMission } from '@/components/home/DailyMission';
 import { FeaturedMascot } from '@/components/home/FeaturedMascot';
+import { AnimatedIn } from '@/components/animations/AnimatedIn';
+import { LootChestModal } from '@/components/LootChestModal';
 
 const PORTALS = [
   {
@@ -47,7 +50,9 @@ const DAILY_MISSION = {
 };
 
 export default function HomeScreen() {
-  const { points, streak } = useGameStore();
+  const { points, streak, tier } = useGameStore();
+  const [lootVisible, setLootVisible] = useState(false);
+  const [lootRewards, setLootRewards] = useState<any[]>([]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,61 +60,85 @@ export default function HomeScreen() {
         colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']}
         style={styles.bg}
       />
+
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Casper Universe</Text>
-          <View style={styles.stats}>
-            <GlassCard neonColor="purple" style={styles.stat}>
-              <Text style={styles.statLabel}>Points</Text>
-              <Text style={styles.statValue}>{points}</Text>
-            </GlassCard>
-            <GlassCard neonColor="blue" style={styles.stat}>
-              <Text style={styles.statLabel}>Streak</Text>
-              <Text style={styles.statValue}>{streak}🔥</Text>
-            </GlassCard>
+        <AnimatedIn delay={0}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Casper Universe</Text>
+            <View style={styles.stats}>
+              <GlassCard neonColor="purple" style={styles.stat}>
+                <Text style={styles.statLabel}>Points</Text>
+                <Text style={styles.statValue}>{points}</Text>
+              </GlassCard>
+              <GlassCard neonColor="blue" style={styles.stat}>
+                <Text style={styles.statLabel}>Streak</Text>
+                <Text style={styles.statValue}>{streak}🔥</Text>
+              </GlassCard>
+              <GlassCard neonColor="green" style={styles.stat}>
+                <Text style={styles.statLabel}>Tier</Text>
+                <Text style={styles.statValue}>{tier}</Text>
+              </GlassCard>
+            </View>
           </View>
-        </View>
+        </AnimatedIn>
 
         {/* Daily Mission */}
-        <DailyMission
-          mission={DAILY_MISSION}
-          onPress={() => console.log('Daily mission pressed')}
-        />
+        <AnimatedIn delay={100}>
+          <DailyMission
+            mission={DAILY_MISSION}
+            onPress={() => console.log('Daily mission pressed')}
+          />
+        </AnimatedIn>
 
         {/* Featured Mascot Episode */}
-        <Text style={styles.sectionTitle}>Featured Episode</Text>
-        <FeaturedMascot
-          episode={FEATURED_EPISODE}
-          onPress={() => console.log('Featured episode pressed')}
-        />
+        <AnimatedIn delay={200}>
+          <Text style={styles.sectionTitle}>Featured Episode</Text>
+          <FeaturedMascot
+            episode={FEATURED_EPISODE}
+            onPress={() => console.log('Featured episode pressed')}
+          />
+        </AnimatedIn>
 
         {/* Portals */}
-        <Text style={styles.sectionTitle}>Portals</Text>
+        <AnimatedIn delay={300}>
+          <Text style={styles.sectionTitle}>Portals</Text>
+        </AnimatedIn>
         {PORTALS.map((portal, index) => (
-          <PortalCard
-            key={portal.id}
-            title={portal.title}
-            description={portal.description}
-            icon={portal.icon}
-            neonColor={portal.neonColor}
-            delay={index * 100}
-            onPress={() => console.log('Portal pressed:', portal.id)}
-          />
+          <AnimatedIn key={portal.id} delay={400 + index * 100}>
+            <PortalCard
+              title={portal.title}
+              description={portal.description}
+              icon={portal.icon}
+              neonColor={portal.neonColor}
+              delay={0}
+              onPress={() => console.log('Portal pressed:', portal.id)}
+            />
+          </AnimatedIn>
         ))}
 
         {/* Mascots */}
-        <Text style={styles.sectionTitle}>Mascots</Text>
+        <AnimatedIn delay={600}>
+          <Text style={styles.sectionTitle}>Mascots</Text>
+        </AnimatedIn>
         <View style={styles.mascotGrid}>
-          {mascots.slice(0, 6).map((mascot) => (
-            <MascotCard
-              key={mascot.id}
-              mascot={mascot}
-              onPress={() => console.log('Mascot pressed:', mascot.id)}
-            />
+          {mascots.slice(0, 6).map((mascot, index) => (
+            <AnimatedIn key={mascot.id} delay={700 + index * 50}>
+              <MascotCard
+                mascot={mascot}
+                onPress={() => console.log('Mascot pressed:', mascot.id)}
+              />
+            </AnimatedIn>
           ))}
         </View>
       </ScrollView>
+
+      {/* Loot Chest Modal */}
+      <LootChestModal
+        visible={lootVisible}
+        rewards={lootRewards}
+        onClose={() => setLootVisible(false)}
+      />
     </SafeAreaView>
   );
 }
