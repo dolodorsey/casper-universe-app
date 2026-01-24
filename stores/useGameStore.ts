@@ -1,1 +1,34 @@
-import {create} from 'zustand';type GameState={points:number;streak:number;lastPlayed:string|null;addPoints:(pts:number)=>void;updateStreak:()=>void};export const useGameStore=create<GameState>((set,get)=>({points:0,streak:0,lastPlayed:null,addPoints:(pts)=>set((s)=>({points:s.points+pts})),updateStreak:()=>{const today=new Date().toDateString();const last=get().lastPlayed;if(last===today)return;const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const isConsecutive=last===yesterday.toDateString();set({streak:isConsecutive?get().streak+1:1,lastPlayed:today})}}));
+import { create } from "zustand";
+import { LootReward } from "@/lib/rewards";
+
+type GameState = {
+  points: number;
+  streak: number;
+  lastPlayed: string | null;
+  addPoints: (pts: number) => void;
+  
+  // Phase 3: Loot + Perks
+  lastLoot: LootReward | null;
+  setLastLoot: (r: LootReward | null) => void;
+  unlockedPerks: string[];
+  unlockPerk: (perkId: string) => void;
+};
+
+export const useGameStore = create<GameState>()((set, get) => ({
+  points: 0,
+  streak: 0,
+  lastPlayed: null,
+  addPoints: (pts) => set((state) => ({ points: state.points + pts })),
+  
+  // Phase 3: Loot + Perks
+  lastLoot: null,
+  setLastLoot: (r) => set({ lastLoot: r }),
+  
+  unlockedPerks: [],
+  unlockPerk: (perkId) =>
+    set((state) => ({
+      unlockedPerks: state.unlockedPerks.includes(perkId)
+        ? state.unlockedPerks
+        : [...state.unlockedPerks, perkId]
+    }))
+}));
