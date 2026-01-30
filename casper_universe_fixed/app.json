@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Casper Universe",
+    "slug": "casper-universe-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logos/CASPER.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/logos/CASPER.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#07070A"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "scheme": "casperuniverse",
+    "plugins": ["expo-router"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logos/CASPER.png",
+        "backgroundColor": "#07070A"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_ME"
+      }
+    }
+  }
+}
