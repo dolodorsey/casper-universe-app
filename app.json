@@ -1,8 +1,8 @@
 {
-    "expo": {
-        "web": {
-            "bundler": "metro",
-            "output": "static"
-        }
+  "expo": {
+    "web": {
+      "bundler": "metro",
+      "output": "single"
     }
+  }
 }
