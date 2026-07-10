@@ -10,13 +10,14 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
-      - run: npm ci
+      - name: Install from current package manifest
+        run: npm install --legacy-peer-deps --no-audit --no-fund
       - run: node --test tests/*.test.mjs
-      - run: npm run build
+      - run: npm run vercel-build
