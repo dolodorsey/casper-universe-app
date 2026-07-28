@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator } from 'react-native';
-import { UniverseBackground } from '../components/ui/UniverseBackground';
+import UniverseBackground from '../components/ui/UniverseBackground';
 import { AuthProvider, useAuth } from '../lib/auth';
 
 /**
@@ -58,11 +58,10 @@ export default function RootLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
       <StatusBar style="light" />
-      <UniverseBackground>
-        <AuthProvider>
-          <AuthGate />
-        </AuthProvider>
-      </UniverseBackground>
+      <UniverseBackground />
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
     </View>
   );
 }

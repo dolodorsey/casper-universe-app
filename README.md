@@ -1,6 +1,6 @@
 # Casper Universe App
 
-> Gamified brand universe with trivia, mascots, rewards, and QR scans for 10 Casper brands
+> Gamified brand universe with trivia, mascots, rewards, and QR scans for 12 Casper brands
 
 ## 🚀 Quick Start
 
