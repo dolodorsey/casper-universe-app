@@ -15,9 +15,11 @@ export const tokens = {
         line: 'rgba(255,255,255,0.10)',
         text0: '#FFFFFF',
         text1: 'rgba(255,255,255,0.82)',
+        text2: 'rgba(255,255,255,0.62)',
         muted: 'rgba(255,255,255,0.62)',
         gold: '#F5C542',
         neon: '#6DFFB8',
         danger: '#FF5A5F',
+        border: 'rgba(255,255,255,0.10)',
     },
 } as const;

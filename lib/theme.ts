@@ -22,6 +22,10 @@ export const theme = {
     surface: '#1A1A3E',
     text: '#FFFFFF',
     textSecondary: '#A0A0C0',
+    accent: '#B537F2',
+    success: '#39FF14',
+    cardBg: 'rgba(20, 20, 40, 0.7)',
+    bg: '#0A0A1E',
   },
 
   shadows: {
@@ -68,17 +72,15 @@ export const theme = {
   typography: {
     h1: { fontSize: 32, fontWeight: '700' },
     h2: { fontSize: 24, fontWeight: '600' },
+    h3: { fontSize: 18, fontWeight: '600' },
     body: { fontSize: 16, fontWeight: '400' },
     caption: { fontSize: 12, fontWeight: '400' },
-  },
-};
+  } as const,
 
-// Aliases for compatibility
-// @ts-ignore
-theme.colors.accent = theme.colors.neonPurple;
-// @ts-ignore
-theme.colors.cardBg = theme.colors.glassDark;
-// @ts-ignore
-theme.colors.bg = theme.colors.background;
+  gold: '#F5C542',
+  brandAccent: '#B537F2',
+  text: '#FFFFFF',
+  muted: '#A0A0C0',
+};
 
 export type Theme = typeof theme;

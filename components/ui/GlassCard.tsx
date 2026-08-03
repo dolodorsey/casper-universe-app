@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { BlurView } from 'expo-blur';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { tokens } from '@/lib/ui/tokens';
@@ -8,9 +8,11 @@ import { haptics } from '@/lib/ui/haptics';
 type Props = {
   children: React.ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   glow?: boolean;
   disabled?: boolean;
+  neonColor?: string;
+  variant?: string;
 };
 
 export default function GlassCard({ children, onPress, style, glow, disabled }: Props) {
@@ -43,6 +45,8 @@ export default function GlassCard({ children, onPress, style, glow, disabled }: 
     </Pressable>
   );
 }
+
+export { GlassCard };
 
 const styles = StyleSheet.create({
   card: {

@@ -8,6 +8,10 @@ export type Reward = {
   icon: string;
 };
 
+export type LootReward =
+  | { type: 'points'; amount: number; label: string }
+  | { type: 'perk'; perkId: string; label: string };
+
 export const REWARDS: Reward[] = [
   {
     id: '1',

@@ -13,6 +13,6 @@ export function generateLoot(pointsBase = 75): LootReward {
   return {
     type: "perk",
     perkId: perk.id,
-    label: `Unlocked Perk: ${perk.title}`
+    label: `Unlocked Perk: ${perk.name}`
   };
 }

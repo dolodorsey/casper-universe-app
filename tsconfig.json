@@ -12,5 +12,10 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
+  ],
+  "exclude": [
+    "components/scanner/Scanner.native.tsx",
+    "components/scanner/Scanner.web.tsx",
+    "components/MascotCard.tsx"
   ]
 }

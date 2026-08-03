@@ -7,6 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm run vercel-build",
     "vercel-build": "npx expo export -p web"
   },
   "dependencies": {
@@ -45,6 +47,11 @@
     "@babel/core": "^7.26.0",
     "@types/react": "~18.3.12",
     "typescript": "^5.6.0"
+  },
+  "overrides": {
+    "tar": "7.5.22",
+    "postcss": "8.5.25",
+    "@xmldom/xmldom": "0.9.10"
   },
   "private": true
 }

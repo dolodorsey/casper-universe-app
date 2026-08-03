@@ -57,7 +57,7 @@ export function LootChestModal({
           <Text
             style={{
               color: theme.gold,
-              fontWeight: "950",
+              fontWeight: "900",
               letterSpacing: 2,
               fontSize: 10
             }}
@@ -69,7 +69,7 @@ export function LootChestModal({
             style={{
               color: theme.text,
               fontSize: 22,
-              fontWeight: "950",
+              fontWeight: "900",
               marginTop: 10
             }}
           >

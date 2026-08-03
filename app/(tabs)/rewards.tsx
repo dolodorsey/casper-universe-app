@@ -8,7 +8,8 @@ import { AnimatedIn } from '@/components/animations/AnimatedIn';
 import { REWARDS, type Reward } from '@/lib/rewards';
 
 export default function RewardsScreen() {
-  const { points, tier } = useGameStore();
+  const { points } = useGameStore();
+  const tier = Math.min(5, Math.floor(points / 1000));
 
   const getRewardStatus = (reward: Reward) => {
     if (points >= reward.pointsRequired) {

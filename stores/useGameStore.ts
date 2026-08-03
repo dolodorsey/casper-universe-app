@@ -59,37 +59,9 @@ export const useGameStore = create<GameState>()(
       setUserId: (id) => set({ userId: id }),
 
       addPoints: async (pts, source = 'unknown') => {
-        // Optimistic local update
-        set((state) => ({ points: state.points + pts }));
-
-        const userId = get().userId;
-        if (isSupabaseConfigured && userId) {
-          try {
-            await supabase.from('points_ledger').insert({
-              user_id: userId,
-              delta: pts,
-              event_type: source,
-              meta: {},
-            });
-            // Aggregate across all brands for the global "points" the UI shows.
-            const { data, error } = await supabase
-              .from('user_stats')
-              .select('points_balance, streak_current')
-              .eq('user_id', userId);
-            if (!error && Array.isArray(data) && data.length > 0) {
-              const totals = data.reduce(
-                (acc: { p: number; s: number }, row: any) => ({
-                  p: acc.p + (row.points_balance ?? 0),
-                  s: Math.max(acc.s, row.streak_current ?? 0),
-                }),
-                { p: 0, s: 0 },
-              );
-              set({ points: totals.p, streak: totals.s });
-            }
-          } catch (err) {
-            console.warn('[GameStore] addPoints sync failed:', err);
-          }
-        }
+        void pts;
+        console.warn(`[GameStore] Ignored unverified client point event: ${source}`);
+        await get().syncFromServer();
       },
 
       setLastLoot: (r) => set({ lastLoot: r }),
