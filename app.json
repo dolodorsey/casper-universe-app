@@ -1,5 +1,23 @@
 {
   "expo": {
+    "name": "Casper Universe",
+    "slug": "casper-universe",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logos/CASPERc.png",
+    "scheme": "casperuniverse",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.caspergroup.universe"
+    },
+    "android": {
+      "package": "com.caspergroup.universe",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logos/CASPERc.png",
+        "backgroundColor": "#07070B"
+      }
+    },
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -7,11 +25,20 @@
     },
     "plugins": [
       "expo-asset",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Casper Universe to scan an authorized reward code."
+        }
+      ],
       "expo-font",
       "expo-router",
       "expo-splash-screen",
       "expo-status-bar",
       "expo-web-browser"
-    ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }

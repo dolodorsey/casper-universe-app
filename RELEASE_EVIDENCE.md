@@ -22,6 +22,8 @@ This record applies only to the CASPER Customer / Casper Universe application. C
 - Production dependency audit now reports zero vulnerabilities, improved from the original 31 findings (including two critical findings).
 - Verified TypeScript compilation and Expo web export across all 12 static routes.
 - Expo Doctor passes all 20 compatibility checks.
+- Production Hermes bundles export successfully for both iOS (`entry-6760a3388873efce3eb09d2d8abd9708.hbc`) and Android (`entry-e11f292cdabbc58e2ffe7a951528c8e5.hbc`).
+- Native identity and release configuration are now explicit: Casper Universe name/slug, branded icon and adaptive icon, `com.caspergroup.universe` bundle/package identity, scanner camera disclosure, and EAS development/preview/store profiles with production auto-increment.
 
 ## Verification
 
