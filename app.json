@@ -4,6 +4,14 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/logos/CASPERc.png"
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font",
+      "expo-router",
+      "expo-splash-screen",
+      "expo-status-bar",
+      "expo-web-browser"
+    ]
   }
 }

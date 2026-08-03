@@ -18,8 +18,10 @@ This record applies only to the CASPER Customer / Casper Universe application. C
 - Removed optimistic client-side point awards; the customer wallet now reconciles from server-authoritative balances.
 - Repaired the rewards wallet, scanner route, shared visual components, theme compatibility, loot types, and root auth routing.
 - Applied production migration `secure_customer_rewards_and_profiles` to Supabase project `rvplisxkjsoyfbkyusga`.
-- Reduced dependency findings from 31, including two critical findings, to 14 moderate transitive Expo findings with no critical or high findings.
+- Upgraded the complete application foundation from Expo 52 / React Native 0.76 / React 18 to Expo 57 / React Native 0.86 / React 19, including Router 57, Reanimated 4, Worklets, Async Storage 2, current Supabase JS, and compatible native modules.
+- Production dependency audit now reports zero vulnerabilities, improved from the original 31 findings (including two critical findings).
 - Verified TypeScript compilation and Expo web export across all 12 static routes.
+- Expo Doctor passes all 20 compatibility checks.
 
 ## Verification
 

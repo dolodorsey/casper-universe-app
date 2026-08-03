@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         opacity: 0.55,
     },
     noise: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         backgroundColor: 'rgba(255,255,255,0.02)',
     },
 });
