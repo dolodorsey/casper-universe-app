@@ -34,7 +34,8 @@ Production verification must confirm unauthenticated routing, OTP sign-in, one s
 
 ## Live platform verification
 
-- Latest Vercel production deployment is ready and matches commit `bef6fe4`.
+- Vercel production deployment `dpl_2U5Qns2yFZG9a1vWtXDBDLpB33K6` is READY at `https://casper-universe-app.vercel.app` and contains the Expo 57 release from commit `f2a0047`.
+- Live browser verification confirms the passwordless email-code entry screen renders and direct anonymous access to `/rewards` redirects to `/auth`.
 - Vercel reported no runtime error clusters during the seven-day production check.
 - Anonymous callers cannot execute `redeem_qr_token` and have no policy for enumerating `qr_tokens`.
 - The authenticated redemption function remains intentionally privileged because it performs the locked, server-authoritative points transaction. It checks `auth.uid()`, locks the token and daily-cap rows, rejects duplicates, enforces five scans per day, and caps each award at 500 points.
