@@ -29,3 +29,12 @@ npm audit --omit=dev --audit-level=critical
 ```
 
 Production verification must confirm unauthenticated routing, OTP sign-in, one successful QR redemption, duplicate rejection, daily-cap rejection, balance refresh, rewards visibility, and sign-out.
+
+## Live platform verification
+
+- Latest Vercel production deployment is ready and matches commit `bef6fe4`.
+- Vercel reported no runtime error clusters during the seven-day production check.
+- Anonymous callers cannot execute `redeem_qr_token` and have no policy for enumerating `qr_tokens`.
+- The authenticated redemption function remains intentionally privileged because it performs the locked, server-authoritative points transaction. It checks `auth.uid()`, locks the token and daily-cap rows, rejects duplicates, enforces five scans per day, and caps each award at 500 points.
+- `fraud_log` and `notifications_queue` are intentionally service-only: anonymous and authenticated roles have no DML privileges.
+- The remaining actionable dashboard gate is enabling Supabase leaked-password protection.
