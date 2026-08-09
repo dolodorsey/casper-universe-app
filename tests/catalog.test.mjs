@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 
 const migration = await readFile(new URL('../supabase/migrations/20260809010000_stock_casper_customer_catalog.sql', import.meta.url), 'utf8');
 const brandSource = await readFile(new URL('../data/brands.ts', import.meta.url), 'utf8');
+const webScanner = await readFile(new URL('../components/scanner/Scanner.web.tsx', import.meta.url), 'utf8');
 
 const approvedSlugs = [
   'angel-wings', 'tha-morning-after', 'patty-daddy', 'espresso-co',
@@ -24,4 +25,9 @@ test('customer seed is idempotent and never fabricates point awards', () => {
   assert.match(migration, /where not exists/i);
   assert.match(migration, /points_awarded, sort_order/);
   assert.match(migration, /seed\.explanation, 0, seed\.sort_order/);
+});
+
+test('web reward redemption is server verified', () => {
+  assert.match(webScanner, /redeem_qr_token/);
+  assert.doesNotMatch(webScanner, /generateLootDrop|addPoints/);
 });

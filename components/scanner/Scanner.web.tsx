@@ -1,33 +1,40 @@
-import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { useState } from 'react';
-import Screen from '@/components/ui/Screen';
-import { PrimaryButton } from '@/components/ui/PrimaryButton';
-import { LootChestModal } from '@/components/LootChestModal';
-import { generateLootDrop } from '@/lib/lootEngine';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
 import { AnimatedIn } from '@/components/animations/AnimatedIn';
-import { useGameStore } from '@/stores/useGameStore';
+import { PrimaryButton } from '@/components/ui/PrimaryButton';
+import Screen from '@/components/ui/Screen';
+import { supabase } from '@/lib/supabase';
 import { type } from '@/lib/ui/type';
 import { tokens } from '@/lib/ui/tokens';
+import { useGameStore } from '@/stores/useGameStore';
 
 export default function ScanWebScreen() {
   const [code, setCode] = useState('');
   const [message, setMessage] = useState('');
-  const [lootVisible, setLootVisible] = useState(false);
-  const [lootRewards, setLootRewards] = useState<any[]>([]);
-  const { addPoints, tier } = useGameStore();
+  const [busy, setBusy] = useState(false);
+  const syncFromServer = useGameStore((state) => state.syncFromServer);
 
-  const redeemCode = () => {
-    const normalized = code.trim().toLowerCase();
-    if (!normalized.includes('casper-universe') && !normalized.includes('loot-drop')) {
-      setMessage('That code is not a valid Casper Universe loot drop.');
-      return;
-    }
-
-    const rewards = generateLootDrop(tier);
-    addPoints(rewards.reduce((sum, reward) => sum + reward.points, 0));
-    setLootRewards(rewards);
+  const redeemCode = async () => {
+    const token = code.trim();
+    if (!token || busy) return;
+    setBusy(true);
     setMessage('');
-    setLootVisible(true);
+    try {
+      const { data, error } = await supabase.rpc('redeem_qr_token', { p_token: token });
+      if (error) {
+        setMessage(error.message);
+      } else if (!data?.success) {
+        setMessage(data?.error ?? 'This code could not be redeemed.');
+      } else {
+        await syncFromServer();
+        setCode('');
+        setMessage(`Verified: +${data.points_earned} points`);
+      }
+    } catch {
+      setMessage('Reward verification is temporarily unavailable. Please try again.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -36,37 +43,30 @@ export default function ScanWebScreen() {
         <AnimatedIn delay={0}>
           <Text style={type.h1}>Unlock a Loot Drop</Text>
           <Text style={styles.description}>
-            Enter the code printed beneath a Casper Universe QR code. Camera scanning is available in
-            the mobile app.
+            Enter the code printed beneath a Casper Universe QR code. Every reward is verified by
+            the same secure redemption service used by the mobile app.
           </Text>
           <Text style={styles.label}>Loot drop code</Text>
           <TextInput
             accessibilityLabel="Loot drop code"
-            autoCapitalize="none"
+            autoCapitalize="characters"
             autoCorrect={false}
+            editable={!busy}
             onChangeText={setCode}
             onSubmitEditing={redeemCode}
-            placeholder="casper-universe-…"
+            placeholder="CASPER CODE"
             placeholderTextColor={tokens.colors.text2}
             style={styles.input}
             value={code}
           />
-          {message ? <Text style={styles.error}>{message}</Text> : null}
-          <PrimaryButton
-            title="Unlock Reward"
-            onPress={redeemCode}
-            style={styles.button}
-          />
+          {message ? <Text style={styles.message}>{message}</Text> : null}
+          {busy ? (
+            <ActivityIndicator color={tokens.colors.gold} style={styles.button} />
+          ) : (
+            <PrimaryButton title="Verify Code" onPress={redeemCode} style={styles.button} />
+          )}
         </AnimatedIn>
       </View>
-      <LootChestModal
-        visible={lootVisible}
-        rewards={lootRewards}
-        onClose={() => {
-          setLootVisible(false);
-          setCode('');
-        }}
-      />
     </Screen>
   );
 }
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing.md,
     fontSize: 16,
   },
-  error: {
-    color: '#ff7a8a',
+  message: {
+    color: tokens.colors.text1,
     marginTop: tokens.spacing.sm,
   },
   button: {

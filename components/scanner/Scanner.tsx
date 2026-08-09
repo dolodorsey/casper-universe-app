@@ -17,17 +17,22 @@ export default function Scanner() {
     if (!token || busy) return;
     setBusy(true);
     setMessage('');
-    const { data, error } = await supabase.rpc('redeem_qr_token', { p_token: token });
-    if (error) {
-      setMessage(error.message);
-    } else if (!data?.success) {
-      setMessage(data?.error ?? 'This code could not be redeemed.');
-    } else {
-      await syncFromServer();
-      setCode('');
-      setMessage(`Verified: +${data.points_earned} points`);
+    try {
+      const { data, error } = await supabase.rpc('redeem_qr_token', { p_token: token });
+      if (error) {
+        setMessage(error.message);
+      } else if (!data?.success) {
+        setMessage(data?.error ?? 'This code could not be redeemed.');
+      } else {
+        await syncFromServer();
+        setCode('');
+        setMessage(`Verified: +${data.points_earned} points`);
+      }
+    } catch {
+      setMessage('Reward verification is temporarily unavailable. Please try again.');
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   return (
