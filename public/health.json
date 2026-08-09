@@ -1,0 +1,10 @@
+{
+  "app": "casper-universe-app",
+  "brand": "The Casper Group / Casper Universe",
+  "service": "multi-brand-quick-serve-operations",
+  "status": "blocked",
+  "schema_version": 1,
+  "release_gate": "canonicalization-required",
+  "proposed_authority": "Casper Universe Supabase rvplisxkjsoyfbkyusga",
+  "generated_at": "2026-07-10T00:00:00-04:00"
+}
