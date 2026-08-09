@@ -6,6 +6,8 @@ import { View, ActivityIndicator } from 'react-native';
 import UniverseBackground from '../components/ui/UniverseBackground';
 import { AuthProvider, useAuth } from '../lib/auth';
 
+const releaseSha = process.env.EXPO_PUBLIC_BUILD_SHA ?? 'local';
+
 /**
  * Root layout — wraps the app with AuthProvider and gates the (tabs) group
  * behind authentication. If no session, route to /auth.
@@ -57,6 +59,12 @@ function AuthGate() {
 export default function RootLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
+      <View
+        testID={`casper-customer-release-${releaseSha}`}
+        style={{ display: 'none' }}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      />
       <StatusBar style="light" />
       <UniverseBackground />
       <AuthProvider>
