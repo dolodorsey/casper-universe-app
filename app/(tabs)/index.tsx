@@ -215,7 +215,7 @@ const s = StyleSheet.create({
   galleryIndex: { position: 'absolute', bottom: 12, left: 14, color: 'rgba(255,255,255,.72)', fontSize: 9, fontWeight: '900', letterSpacing: 1.6 },
   truthCard: { marginHorizontal: 20, borderRadius: 28, padding: 24, backgroundColor: '#111017', borderWidth: 1, borderColor: 'rgba(231,200,110,.2)' },
   truthEyebrow: { color: '#E7C86E', fontSize: 9, fontWeight: '900', letterSpacing: 2 },
-  truthTitle: { color: '#FFFDF8', fontSize: 27, lineHeight: 30, fontWeight: '850', letterSpacing: -1, marginTop: 12 },
+  truthTitle: { color: '#FFFDF8', fontSize: 27, lineHeight: 30, fontWeight: '800', letterSpacing: -1, marginTop: 12 },
   truthBody: { color: 'rgba(245,240,232,.55)', fontSize: 13, lineHeight: 20, marginTop: 10 },
   truthButton: { marginTop: 20, borderRadius: 14, backgroundColor: '#E7C86E', paddingVertical: 16, alignItems: 'center' },
   truthButtonText: { color: '#08080D', fontSize: 9, fontWeight: '900', letterSpacing: 1.4 },
