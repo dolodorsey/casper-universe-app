@@ -28,6 +28,7 @@ This record applies only to the CASPER Customer / Casper Universe application. C
 - Added a live Supabase-backed Play route and changed the home realm list to prefer the production catalog.
 - Added automated backend contract tests and a GitHub quality gate.
 - Migrated client configuration toward Supabase publishable keys while retaining temporary legacy anon-key compatibility.
+- Added an automation-only iOS build and submission workflow that runs after a successful main quality gate and stays skipped until a valid EAS project ID is configured.
 
 ## Verification
 

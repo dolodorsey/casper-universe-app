@@ -15,7 +15,7 @@ Customer loyalty and brand-discovery application for the 12 CASPER brands. This 
 - Expo 57 / React Native 0.86 / React 19
 - Supabase Auth, PostgreSQL, row-level security, and protected reward RPCs
 - Vercel web deployment
-- EAS native build profiles; the Expo project must still be linked before automated store release
+- EAS native build profiles plus a post-quality-gate automated iOS build/submission workflow
 
 ## Environment
 
@@ -41,6 +41,6 @@ Migrations live in `supabase/migrations`. The August 9 migrations stock and cano
 
 ## Mobile release policy
 
-Do not deploy iOS manually. Link a valid EAS project, configure non-interactive signing and App Store Connect credentials, then release through automation.
+Do not deploy iOS manually. The automated workflow stays skipped until the `EAS_PROJECT_ID` repository variable and `EXPO_TOKEN` secret are configured. EAS must also hold valid non-interactive signing and App Store Connect credentials.
 
 See `RELEASE_EVIDENCE.md` for verified release status.
