@@ -140,3 +140,4 @@ vite.config.ts.timestamp-*
 .vercel
 .expo
 .env*
+!.env.production

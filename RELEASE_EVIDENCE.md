@@ -40,7 +40,7 @@ Production verification must confirm unauthenticated routing, OTP sign-in, one s
 
 ## Live platform verification
 
-- Vercel production deployment `dpl_2U5Qns2yFZG9a1vWtXDBDLpB33K6` is READY at `https://casper-universe-app.vercel.app` and contains the Expo 57 release from commit `f2a0047`.
+- Vercel production deployment `dpl_5Su5SBPFM5fEZPQMUdk5M2LxexbJ` is READY at `https://casper-universe-app.vercel.app` and contains commit `3c7327201e782a1c2134e80c7d142c830b5d8ab4`.
 - Live browser verification confirms the passwordless email-code entry screen renders and direct anonymous access to `/rewards` redirects to `/auth`.
 - Vercel reported no runtime error clusters during the seven-day production check.
 - Anonymous callers cannot execute `redeem_qr_token` and have no policy for enumerating `qr_tokens`.

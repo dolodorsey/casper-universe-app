@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithEmail = async (email: string) => {
     if (!isSupabaseConfigured) {
-      return { error: 'Supabase is not configured. Set EXPO_PUBLIC_SUPABASE_ANON_KEY in env.' };
+      return { error: 'Supabase is not configured. Set EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY in env.' };
     }
     const cleaned = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned)) {

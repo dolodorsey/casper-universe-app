@@ -29,7 +29,7 @@ const getStorage = () => {
 };
 
 const createMockClient = (): SupabaseClient => {
-  const error = { message: 'Supabase not configured. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY.' };
+  const error = { message: 'Supabase not configured. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY.' };
   const unavailableAuth = {
     getSession: async () => ({ data: { session: null }, error }),
     getUser: async () => ({ data: { user: null }, error }),
