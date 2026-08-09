@@ -53,6 +53,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="play"
+        options={{
+          title: 'Play',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>◈</Text>,
+        }}
+        listeners={{
+          tabPress: () => haptics.tap(),
+        }}
+      />
+      <Tabs.Screen
         name="vault"
         options={{
           title: 'Vault',

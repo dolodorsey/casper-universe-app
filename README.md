@@ -1,6 +1,6 @@
 # Casper Universe App
 
-> Gamified brand universe with trivia, mascots, rewards, and QR scans for 12 Casper brands
+> Gamified brand universe with live realm content, trivia, mascots, account points, and verified QR activations for 12 CASPER brands
 
 ## 🚀 Quick Start
 
@@ -35,7 +35,9 @@ Execute in order:
 1. `supabase/migrations/001_init.sql` - Creates all tables
 2. `supabase/migrations/002_rls_policies.sql` - Security policies
 3. `supabase/migrations/003_rpc_functions.sql` - Core RPCs
-4. `supabase/migrations/004_seed.sql` - 10 brands + content
+4. `supabase/migrations/004_rls_policies.sql` - access policies
+5. `supabase/migrations/20260809010000_stock_casper_customer_catalog.sql` - 12-brand launch catalog and knowledge pack
+6. `supabase/migrations/20260809012000_canonicalize_morning_after_realm.sql` - canonical realm cleanup
 
 ### 2. Tables Created (18 total)
 
@@ -64,7 +66,7 @@ Execute in order:
 **QR Scavenger**
 - `qr_codes` + `qr_scans`
 
-## 🎮 10 Casper Brands
+## 🎮 12 CASPER Brands
 
 1. **Angel Wings** - Premium chicken wings
 2. **Pasta Bish** - Artisan pasta
@@ -76,6 +78,8 @@ Execute in order:
 8. **Sweet Tooth** - Desserts
 9. **Mojo Juice** - Cold-pressed juice
 10. **Mr Oyster** - Seafood
+11. **Peace Pizza** - Community pizza
+12. **American Dragon** - Fire-forged American fusion
 
 ## 🗂️ Project Structure
 
@@ -140,7 +144,9 @@ casper-universe-app/
         ├── 001_init.sql
         ├── 002_rls_policies.sql
         ├── 003_rpc_functions.sql
-        └── 004_seed.sql
+        ├── 004_rls_policies.sql
+        ├── 20260809010000_stock_casper_customer_catalog.sql
+        └── 20260809012000_canonicalize_morning_after_realm.sql
 ```
 
 ## 🔐 Security (RLS)

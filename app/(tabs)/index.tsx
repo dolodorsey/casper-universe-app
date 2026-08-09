@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useGameStore } from '@/stores/useGameStore';
 import { REALMS } from '@/data/realms';
 import { LinearGradient } from 'expo-linear-gradient';
+import { loadCatalogBrands } from '@/lib/catalog';
 
 const PATHS = [
   { id: 'scan', title: 'Scan an activation', body: 'Use a Casper QR code to open a verified experience.', icon: '⌁', href: '/(tabs)/scan' },
@@ -19,8 +20,25 @@ export default function HomeScreen() {
   const router = useRouter();
   const { points, streak, unlockedPerks } = useGameStore();
   const tier = points >= 10000 ? 'Diamond' : points >= 5000 ? 'Gold' : points >= 1000 ? 'Silver' : 'Bronze';
-  const current = REALMS[0];
+  const [realms, setRealms] = useState(REALMS);
+  const current = realms[0] ?? REALMS[0];
   const tierColor = TIER_COLORS[tier] || '#FFD700';
+
+  useEffect(() => {
+    loadCatalogBrands()
+      .then((rows) => {
+        if (rows.length > 0) {
+          setRealms(rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            tagline: row.tagline ?? '',
+            description: row.description ?? '',
+            accent: row.primary_color ?? '#D4B87A',
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <ScrollView style={s.container} showsVerticalScrollIndicator={false}>
@@ -34,7 +52,7 @@ export default function HomeScreen() {
         <Text style={s.heroTitle}>CASPER{'\n'}UNIVERSE</Text>
         <Text style={s.heroSub}>Collect. Explore. Earn.</Text>
         <View style={s.heroStats}>
-          <StatPill label="Realms" value={REALMS.length.toString()} />
+          <StatPill label="Realms" value={realms.length.toString()} />
           <StatPill label="Collected" value={unlockedPerks.length.toString()} />
           <StatPill label="Streak" value={`${streak}d`} />
         </View>
@@ -64,7 +82,7 @@ export default function HomeScreen() {
       <View style={s.section}>
         <Text style={s.sectionTitle}>Realms</Text>
         <Text style={s.sectionSub}>Enter a realm to collect mascots</Text>
-        {REALMS.map((realm) => (
+        {realms.map((realm) => (
           <TouchableOpacity key={realm.id} onPress={() => router.push(`/realms/${realm.id}` as any)} activeOpacity={0.85} style={s.realmCard}>
             <View style={[s.realmAccent, { backgroundColor: realm.accent || '#FFD700' }]} />
             <View style={s.realmInfo}>
