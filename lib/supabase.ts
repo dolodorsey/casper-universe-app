@@ -5,17 +5,19 @@ import 'react-native-url-polyfill/auto';
 /**
  * Casper Universe — Supabase client.
  *
- * Reads from EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY env vars.
- * If env vars are missing, falls back to a no-op mock client so the app still
- * boots in development. All real persistence requires the env vars to be set
- * in Vercel + .env.local.
+ * Reads a public Supabase URL and publishable key from the environment.
+ * Missing configuration fails closed: the app can render an explanatory state,
+ * but authentication and data operations return an explicit error.
  */
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
+const supabasePublishableKey =
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
+  '';
 
 export const isSupabaseConfigured =
-  supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
+  supabaseUrl.length > 0 && supabasePublishableKey.length > 0;
 
 const getStorage = () => {
   if (typeof window === 'undefined') return undefined;
@@ -28,36 +30,36 @@ const getStorage = () => {
 
 const createMockClient = (): SupabaseClient => {
   const error = { message: 'Supabase not configured. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY.' };
-  const mockAuth = {
-    getSession: async () => ({ data: { session: null }, error: null }),
-    getUser: async () => ({ data: { user: null }, error: null }),
+  const unavailableAuth = {
+    getSession: async () => ({ data: { session: null }, error }),
+    getUser: async () => ({ data: { user: null }, error }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     signOut: async () => ({ error: null }),
     signInWithOtp: async () => ({ data: null, error }),
     signInWithPassword: async () => ({ data: null, error }),
     signUp: async () => ({ data: null, error }),
   };
-  const mockQuery = {
-    select: () => mockQuery,
-    eq: () => mockQuery,
-    in: () => mockQuery,
-    gte: () => mockQuery,
-    lte: () => mockQuery,
-    order: () => mockQuery,
-    limit: () => mockQuery,
+  const unavailableQuery = {
+    select: () => unavailableQuery,
+    eq: () => unavailableQuery,
+    in: () => unavailableQuery,
+    gte: () => unavailableQuery,
+    lte: () => unavailableQuery,
+    order: () => unavailableQuery,
+    limit: () => unavailableQuery,
     single: async () => ({ data: null, error }),
-    then: (resolve: (v: { data: any; error: any }) => void) => resolve({ data: [], error: null }),
+    then: (resolve: (v: { data: any; error: any }) => void) => resolve({ data: null, error }),
   };
-  const mockFrom = () => ({
-    select: () => mockQuery,
+  const unavailableFrom = () => ({
+    select: () => unavailableQuery,
     insert: async () => ({ data: null, error }),
     update: async () => ({ data: null, error }),
     upsert: async () => ({ data: null, error }),
     delete: async () => ({ data: null, error }),
   });
   return {
-    auth: mockAuth as any,
-    from: mockFrom as any,
+    auth: unavailableAuth as any,
+    from: unavailableFrom as any,
     rpc: async () => ({ data: null, error }),
   } as unknown as SupabaseClient;
 };
@@ -66,7 +68,7 @@ let supabaseInstance: SupabaseClient;
 
 if (isSupabaseConfigured) {
   const storage = getStorage();
-  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+  supabaseInstance = createClient(supabaseUrl, supabasePublishableKey, {
     auth: {
       ...(storage ? { storage } : {}),
       autoRefreshToken: true,
@@ -77,8 +79,8 @@ if (isSupabaseConfigured) {
 } else {
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     console.warn(
-      '[Supabase] Not configured — running in offline/mock mode. ' +
-        'Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to enable real persistence.',
+      '[Supabase] Not configured. Set EXPO_PUBLIC_SUPABASE_URL and ' +
+        'EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY to enable the app.',
     );
   }
   supabaseInstance = createMockClient();
