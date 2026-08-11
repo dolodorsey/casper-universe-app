@@ -1,52 +1,70 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native';
 import { Camera, CameraView } from 'expo-camera';
 import Screen from '@/components/ui/Screen';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
-import { LootChestModal } from '@/components/LootChestModal';
-import { generateLootDrop } from '@/lib/lootEngine';
 import { AnimatedIn } from '@/components/animations/AnimatedIn';
+import { supabase } from '@/lib/supabase';
 import { useGameStore } from '@/stores/useGameStore';
 import { type } from '@/lib/ui/type';
 import { tokens } from '@/lib/ui/tokens';
 
+type RedeemQrResult = {
+  success?: boolean;
+  error?: string;
+  points_earned?: number;
+  brand_id?: string;
+};
+
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
-  const [lootVisible, setLootVisible] = useState(false);
-  const [lootRewards, setLootRewards] = useState<any[]>([]);
-  const { addPoints, tier } = useGameStore();
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const syncFromServer = useGameStore((state) => state.syncFromServer);
 
   const requestPermission = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
     setHasPermission(status === 'granted');
   };
 
-  const handleBarCodeScanned = ({ type, data }: { type: string; data: string }) => {
-    if (scanned) return;
+  const handleBarCodeScanned = async ({ data }: { type: string; data: string }) => {
+    if (scanned || busy) return;
 
+    const token = data.trim();
     setScanned(true);
+    setBusy(true);
+    setMessage('Verifying activation…');
 
-    // Check if it's a valid Casper Universe QR code
-    if (data.includes('casper-universe') || data.includes('loot-drop')) {
-      // Generate loot drop
-      const rewards = generateLootDrop(tier);
-      const totalPoints = rewards.reduce((sum, r) => sum + r.points, 0);
+    try {
+      if (!token) throw new Error('This QR code does not contain a valid Casper activation token.');
 
-      addPoints(totalPoints);
-      setLootRewards(rewards);
-      setLootVisible(true);
-    } else {
-      Alert.alert(
-        'Invalid QR Code',
-        'This is not a Casper Universe loot drop QR code.',
-        [{ text: 'OK', onPress: () => setScanned(false) }]
-      );
+      const { data: resultData, error } = await supabase.rpc('redeem_qr_token', { p_token: token });
+      if (error) throw error;
+
+      const result = (resultData || {}) as RedeemQrResult;
+      if (!result.success) throw new Error(result.error || 'This code could not be redeemed.');
+
+      await syncFromServer();
+      const points = Number(result.points_earned || 0);
+      const brand = result.brand_id ? ` for ${result.brand_id.replaceAll('_', ' ')}` : '';
+      setMessage(`Verified${brand}: +${points.toLocaleString()} points`);
+      Alert.alert('Casper activation verified', `+${points.toLocaleString()} points were added to your account.`, [
+        { text: 'Done' },
+      ]);
+    } catch (redeemError: any) {
+      const errorMessage = redeemError?.message || 'Reward verification is temporarily unavailable. Please try again.';
+      setMessage(errorMessage);
+      Alert.alert('Activation not completed', errorMessage, [
+        { text: 'Scan again', onPress: () => setScanned(false) },
+      ]);
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleLootClose = () => {
-    setLootVisible(false);
+  const resetScanner = () => {
+    setMessage('');
     setScanned(false);
   };
 
@@ -56,8 +74,8 @@ export default function ScanScreen() {
         <View style={styles.center}>
           <AnimatedIn delay={0}>
             <Text style={type.h1}>QR Scanner</Text>
-            <Text style={[type.body, { textAlign: 'center', marginVertical: tokens.spacing.md }]}>
-              Scan Casper Universe QR codes to unlock loot drops!
+            <Text style={[type.body, styles.centerCopy]}>
+              Scan verified Casper Universe QR codes to redeem activation points.
             </Text>
             <PrimaryButton
               title="Request Camera Permission"
@@ -75,9 +93,9 @@ export default function ScanScreen() {
       <Screen>
         <View style={styles.center}>
           <AnimatedIn delay={0}>
-            <Text style={type.h1}>🚫 Camera Access Denied</Text>
-            <Text style={[type.body, { textAlign: 'center', marginVertical: tokens.spacing.md }]}>
-              Please enable camera permissions in your device settings to scan QR codes.
+            <Text style={type.h1}>Camera Access Required</Text>
+            <Text style={[type.body, styles.centerCopy]}>
+              Enable camera access in your device settings to scan Casper activation codes.
             </Text>
           </AnimatedIn>
         </View>
@@ -90,37 +108,36 @@ export default function ScanScreen() {
       <View style={styles.cameraContainer}>
         <CameraView
           style={styles.camera}
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: ['qr'],
-          }}
+          onBarcodeScanned={scanned || busy ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         />
 
         <View style={styles.overlay}>
           <AnimatedIn delay={0}>
             <Text style={styles.scanTitle}>Scan QR Code</Text>
-            <Text style={styles.scanSubtitle}>Position the QR code within the frame</Text>
+            <Text style={styles.scanSubtitle}>Point the camera at a verified Casper activation code.</Text>
           </AnimatedIn>
 
           <View style={styles.scanFrame} />
 
-          {scanned && (
-            <AnimatedIn delay={200}>
-              <PrimaryButton
-                title="Tap to Scan Again"
-                onPress={() => setScanned(false)}
-                style={styles.rescanButton}
-              />
+          {busy ? (
+            <View style={styles.statusBox}>
+              <ActivityIndicator color={tokens.colors.gold} />
+              <Text style={styles.statusText}>{message || 'Verifying activation…'}</Text>
+            </View>
+          ) : message ? (
+            <View style={styles.statusBox}>
+              <Text style={styles.statusText}>{message}</Text>
+            </View>
+          ) : null}
+
+          {scanned && !busy && (
+            <AnimatedIn delay={150}>
+              <PrimaryButton title="Scan Another Code" onPress={resetScanner} style={styles.rescanButton} />
             </AnimatedIn>
           )}
         </View>
       </View>
-
-      <LootChestModal
-        visible={lootVisible}
-        rewards={lootRewards}
-        onClose={handleLootClose}
-      />
     </Screen>
   );
 }
@@ -131,6 +148,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: tokens.spacing.xl,
+  },
+  centerCopy: {
+    textAlign: 'center',
+    marginVertical: tokens.spacing.md,
   },
   button: {
     minWidth: 200,
@@ -176,7 +197,24 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radius.lg,
     backgroundColor: 'rgba(109, 255, 184, 0.1)',
   },
+  statusBox: {
+    marginTop: tokens.spacing.lg,
+    minWidth: 240,
+    maxWidth: 340,
+    padding: tokens.spacing.md,
+    borderRadius: tokens.radius.md,
+    backgroundColor: 'rgba(10,10,16,.82)',
+    borderWidth: 1,
+    borderColor: tokens.colors.border,
+    alignItems: 'center',
+    gap: tokens.spacing.sm,
+  },
+  statusText: {
+    ...type.body,
+    color: tokens.colors.text0,
+    textAlign: 'center',
+  },
   rescanButton: {
-    marginTop: tokens.spacing.xl,
+    marginTop: tokens.spacing.lg,
   },
 });
