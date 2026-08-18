@@ -9,14 +9,19 @@
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.caspergroup.universe"
+      "bundleIdentifier": "com.caspergroup.universe",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.caspergroup.universe",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logos/CASPERc.png",
         "backgroundColor": "#07070B"
-      }
+      },
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
