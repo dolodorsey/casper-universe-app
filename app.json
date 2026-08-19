@@ -33,7 +33,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Casper Universe to scan an authorized reward code."
+          "cameraPermission": "Allow Casper Universe to scan an authorized reward code.",
+          "microphonePermission": false
         }
       ],
       "expo-font",
